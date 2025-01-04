@@ -1,0 +1,33 @@
+name: Crawl
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # chạy mỗi ngày lúc 12:00 AM UTC
+  push:
+
+jobs:
+  get_proxies:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Delete old proxies file
+        run: rm -f proxies.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Scrapy HTTP run 
+        run: scrapy crawl proxy --nolog
+      - name: Scrapy HTTPS run 
+        run: scrapy crawl proxy_https --nolog
+      - name: Scrapy SOCKETS4 run 
+        run: scrapy crawl proxy_4 --nolog
+      - name: Scrapy SOCKETS5 run 
+        run: scrapy crawl proxy_5 --nolog
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
